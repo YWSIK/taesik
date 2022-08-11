@@ -14,7 +14,7 @@ import os
 # 백테스트 할 날짜 생성
 def make_date_list(m,d):
     date_list = []
-    for y in range(2003, 2021):
+    for y in range(2003, 2022):
         day = str(y) + str(m) + str(d)
         b_day = stock.get_nearest_business_day_in_a_week(date=day)
         date_list.append(b_day)
@@ -44,18 +44,15 @@ def row_combo3_company(date, date2):
     df = pd.merge(df, df_f2, left_index=True, right_index=True)
     
     # BPS PER PBR EPS DIV DPS
-    df = df[['종목명','종가_x', '상장주식수_x', 'EPS_x', '종가_y', '상장주식수_y', 'EPS_y', 'PBR', 'PER']]
-    df.columns = ['종목명','종가', '상장주식수', 'EPS', '1년후종가', '1년후상장주식수', '1년후EPS', 'PBR', 'PER']
+    df = df[['종목명','종가_x', '상장주식수_x', 'EPS_x', '종가_y', '상장주식수_y', 'EPS_y', 'PBR']]
+    df.columns = ['종목명','종가', '상장주식수', 'EPS', '1년후종가', '1년후상장주식수', '1년후EPS', 'PBR']
     df['상장주식수변동'] = df['1년후상장주식수'] - df['상장주식수']
     df['EPS_delta'] = (  ( (df['1년후EPS'] - df['EPS']) / df['EPS'] )* 100 )
     
     
     df = df[df['PBR'] > 0.2] 
-    df = df[df['PER'] > 0]  #PBR, PER 조건제시
     df = df[df['EPS_delta'] > 20]
-    df['combo3_rank1'] = df['PBR'].rank() +  df['PER'].rank() 
-    df['combo3_rank2'] = df['EPS_delta'].rank(ascending= False)
-    df['combo3_rank'] =  df['combo3_rank1'] +  df['combo3_rank2']
+    df['combo3_rank1'] = df['PBR'].rank() +  df['EPS_delta'].rank(ascending= False)
     df = df.sort_values(by = ['combo3_rank'])
     
     df = df.iloc[:30] #종목개수
@@ -97,13 +94,11 @@ def row_combo3(date, date2):
     df['상장주식수변동'] = df['1년후상장주식수'] - df['상장주식수']
     df['EPS_delta'] = ( ( (df['1년후EPS'] - df['EPS']) / df['EPS'] )*100 )
     
-    df = df[df['PBR']>0.2]
-    df = df[df['PER']>0] #PBR, PER 조건제시 
-    df = df[df['EPS_delta']>20]
-    df['combo3_rank1'] = df['PBR'].rank() + df['PER'].rank()
-    df['combo3_rank2'] = df['EPS_delta'].rank(ascending= False)
-    df['combo3_rank'] =  df['combo3_rank1'] +  df['combo3_rank2']
+    df = df[df['PBR'] > 0.2] 
+    df = df[df['EPS_delta'] > 20]
+    df['combo3_rank1'] = df['PBR'].rank() +  df['EPS_delta'].rank(ascending= False)
     df = df.sort_values(by = ['combo3_rank'])
+
     
     df = df.iloc[:30] #종목개수
     df['수익'] = df['1년후종가'] - df['종가']
@@ -124,7 +119,7 @@ def row_combo3(date, date2):
     
     df_t = pd.DataFrame(data=result, columns = ['투자일', '1년후', '수익률'])
     return df_t
-    
+
     df = df.iloc[:30] #종목개수
     df['수익'] = df['1년후종가'] - df['종가']
     
