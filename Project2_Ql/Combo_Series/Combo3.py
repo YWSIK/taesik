@@ -14,7 +14,7 @@ import os
 # 백테스트 할 날짜 생성
 def make_date_list(m,d):
     date_list = []
-    for y in range(2003, 2022):
+    for y in range(2017, 2022):
         day = str(y) + str(m) + str(d)
         b_day = stock.get_nearest_business_day_in_a_week(date=day)
         date_list.append(b_day)
@@ -52,7 +52,7 @@ def row_combo3_company(date, date2):
     
     df = df[df['PBR'] > 0.2] 
     df = df[df['EPS_delta'] > 20]
-    df['combo3_rank1'] = df['PBR'].rank() +  df['EPS_delta'].rank(ascending= False)
+    df['combo3_rank'] = df['PBR'].rank() +  df['EPS_delta'].rank(ascending= False)
     df = df.sort_values(by = ['combo3_rank'])
     
     df = df.iloc[:30] #종목개수
@@ -96,7 +96,7 @@ def row_combo3(date, date2):
     
     df = df[df['PBR'] > 0.2] 
     df = df[df['EPS_delta'] > 20]
-    df['combo3_rank1'] = df['PBR'].rank() +  df['EPS_delta'].rank(ascending= False)
+    df['combo3_rank'] = df['PBR'].rank() +  df['EPS_delta'].rank(ascending= False)
     df = df.sort_values(by = ['combo3_rank'])
 
     
@@ -164,7 +164,7 @@ test_days = ['28'] #매월 매수/매도일
 
 for d in test_days:
     origin_path = 'C://USERS/dnxor/Invest/Combo_3'
-    folder_name = '//Combo3_BackTest(매월' + d + '일, PBR 0이상 & PER 0이상 & EPS 성장률 20% 이상) (20개)'
+    folder_name = '//Combo3_BackTest(매월' + d + '일, PBR 0.2이상 & EPS 성장률 20% 이상) (30개)'
     os.mkdir(origin_path + folder_name)
     
     
@@ -187,5 +187,5 @@ for d in test_days:
             #백테스트 구동하기
             df_t = pd.concat([df_t, invest_years(date_list)])
     
-    path = origin_path + folder_name + '//Combo3_BackTest(종합매월' + d + '일투자) 20개. xlsx'
+    path = origin_path + folder_name + '//Combo3_BackTest(종합매월' + d + '일투자) 30개. xlsx'
     df_t.to_excel(path)  
